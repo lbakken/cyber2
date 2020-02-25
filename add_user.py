@@ -10,12 +10,22 @@ Luke Bakken
 Zachary Ryan
 
 """
+import random
+ALPH = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+def gen_salt():
+    salt = []
+    for i in range(16):
+        salt.append(random.choice(ALPH))
+        
+    return string(salt)
+
 
 user = input("Enter a username: ")
 password = input("Enter a password: ")
 
 # TODO: Create a salt and hash the password
-# salt = ???
+salt = gen_salt(user+password)
 # hashed_password = ???
 
 try:
