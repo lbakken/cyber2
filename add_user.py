@@ -4,6 +4,11 @@
     CSCI 3403
     Authors: Matt Niemiec and Abigail Fernandes
     The solution contains the same number of lines (plus imports)
+
+Vamshi Arugonda
+Luke Bakken
+Zachary Ryan
+
 """
 
 user = input("Enter a username: ")
