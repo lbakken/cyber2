@@ -16,6 +16,8 @@ Zachary Ryan
 """
 
 import socket
+import cryptography
+from cryptography.fernet import Fernet
 
 host = "localhost"
 port = 10001
@@ -29,19 +31,30 @@ def pad_message(message):
 # Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
     # TODO: Implement this function
-    pass
+
+    file = open("srv", "rb")
+    key = file.read()
+    file.close()
+
+    return session_key
 
 
 # Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
-    pass
+
+    f = Fernet(session_key)
+    decrypted = f.decrypt(client_message)
+    return decrypted
 
 
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    pass
+
+    f = Fernet(session_key)
+    encrypted = f.encrypt(message)
+    return encrypted
 
 
 # Receive 1024 bytes from the client
@@ -107,10 +120,18 @@ def main():
                 ciphertext_message = receive_message(connection)
 
                 # TODO: Decrypt message from client
+                text_message = decrypt_message(ciphertext_message, plaintext_key)
 
                 # TODO: Split response from user into the username and password
+                user, password = text_message
+                success = verify_hash(user, password)
 
                 # TODO: Encrypt response to client
+                if success:
+                    text_response = "SUCCESS!"
+                else:
+                    text_response = "FAILURE!"
+                ciphertext_response = encrypt_message(text_response, plaintext_key)
 
                 # Send encrypted response
                 send_message(connection, ciphertext_response)
