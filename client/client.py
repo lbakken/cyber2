@@ -18,6 +18,7 @@ Zachary Ryan
 import socket
 import os
 
+import secrets
 
 host = "localhost"
 port = 10001
@@ -32,7 +33,7 @@ def pad_message(message):
 # TODO: Generate a cryptographically random AES key
 def generate_key():
     # TODO: Implement this function
-    pass
+    return secrets.token_bytes(16)
 
 
 # Takes an AES session key and encrypts it using the appropriate
@@ -45,7 +46,6 @@ def encrypt_handshake(session_key):
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    pass
 
 
 # Decrypts the message using AES. Same as server function
@@ -96,12 +96,17 @@ def main():
             exit(0)
 
         # TODO: Encrypt message and send to server
+        message = encrypt_message(message, key)
+        send_message(sock, message)
 
         # TODO: Receive and decrypt response from server
+        received = receive_message(sock)
+        decrypted = decrypt_message(received, key)
+        print(decrypted)
+
     finally:
         print('closing socket')
         sock.close()
-
 
 if __name__ in "__main__":
     main()

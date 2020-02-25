@@ -15,7 +15,7 @@ ALPH = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 def gen_salt():
     salt = ""
-    for i in range(16):
+    for i in range( 16):
         salt += random.choice(ALPH)
     return salt
 
