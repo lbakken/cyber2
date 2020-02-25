@@ -17,7 +17,6 @@ def gen_salt():
     salt = ""
     for i in range(16):
         salt += random.choice(ALPH)
-
     return salt
 
 
