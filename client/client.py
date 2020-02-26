@@ -19,6 +19,9 @@ import socket
 import os
 
 import secrets
+import cryptography
+from cryptography.fernet import Fernet
+
 
 host = "localhost"
 port = 10001
@@ -40,18 +43,33 @@ def generate_key():
 # key and return the value
 def encrypt_handshake(session_key):
     # TODO: Implement this function
-    pass
+    file = open("cli.pub", "rb")
+    server_public_key = str(file.read())
+    file.close()
+
+    temp = server_public_key.split(" ")
+    server_public_key = temp[1]
+    #print(len(server_public_key))
+
+    handshake_cipher = Fernet(server_public_key)
+    encrypted_handshake = handshake_cipher.encrypt(session_key)
+    return encrypted_handshake
 
 
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
+    f = Fernet(session_key)
+    encrypted = f.encrypt(message.encode())
+    return encrypted
 
 
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    pass
+    f = Fernet(session_key)
+    decrypted = f.decrypt(client_message)
+    return decrypted
 
 
 # Sends a message over TCP
