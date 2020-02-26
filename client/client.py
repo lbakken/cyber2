@@ -21,6 +21,9 @@ import os
 import secrets
 import cryptography
 from cryptography.fernet import Fernet
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from base64 import b64decode,b64encode
 
 
 host = "localhost"
@@ -43,15 +46,15 @@ def generate_key():
 # key and return the value
 def encrypt_handshake(session_key):
     # TODO: Implement this function
-    file = open("cli.pub", "rb")
-    server_public_key = str(file.read())
+    file = open("cli", "rb")
+    externKey = file.read()
     file.close()
 
-    temp = server_public_key.split(" ")
-    server_public_key = temp[1]
-    #print(len(server_public_key))
+    server_public_key = RSA.importKey(externKey)
 
-    handshake_cipher = Fernet(server_public_key)
+    #print(server_public_key)
+
+    handshake_cipher = Cipher_PKCS1_v1_5.new(server_public_key)
     encrypted_handshake = handshake_cipher.encrypt(session_key)
     return encrypted_handshake
 
@@ -60,7 +63,8 @@ def encrypt_handshake(session_key):
 def encrypt_message(message, session_key):
     # TODO: Implement this function
     f = Fernet(session_key)
-    encrypted = f.encrypt(message.encode())
+    padded_message = pad_message(message)
+    encrypted = f.encrypt(padded_message.encode())
     return encrypted
 
 
@@ -68,7 +72,7 @@ def encrypt_message(message, session_key):
 def decrypt_message(message, session_key):
     # TODO: Implement this function
     f = Fernet(session_key)
-    decrypted = f.decrypt(client_message)
+    decrypted = f.decrypt(message)
     return decrypted
 
 
