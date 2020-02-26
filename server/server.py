@@ -53,7 +53,7 @@ def encrypt_message(message, session_key):
     # TODO: Implement this function
 
     f = Fernet(session_key)
-    encrypted = f.encrypt(message)
+    encrypted = f.encrypt(message.encode())
     return encrypted
 
 
