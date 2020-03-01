@@ -22,8 +22,8 @@ import secrets
 import cryptography
 from cryptography.fernet import Fernet
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
-from base64 import b64decode,b64encode
+from Crypto.Cipher import PKCS1_OAEP as PKCS1_OAEP
+from Crypto.Cipher import AES
 
 
 host = "localhost"
@@ -45,9 +45,8 @@ def generate_key():
 # Takes an AES session key and encrypts it using the appropriate
 # key and return the value
 def encrypt_handshake(session_key):
-    print(session_key)
     # TODO: Implement this function
-    file = open("cli", "rb")
+    file = open("../server/srv.pub", "rb")
     externKey = file.read()
     file.close()
 
@@ -55,7 +54,7 @@ def encrypt_handshake(session_key):
 
     #print(server_public_key)
 
-    handshake_cipher = Cipher_PKCS1_v1_5.new(server_public_key)
+    handshake_cipher = PKCS1_OAEP.new(server_public_key)
     encrypted_handshake = handshake_cipher.encrypt(session_key)
     return encrypted_handshake
 
@@ -63,17 +62,21 @@ def encrypt_handshake(session_key):
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    f = Fernet(session_key)
-    padded_message = pad_message(message)
-    encrypted = f.encrypt(padded_message.encode())
+    #f = Fernet(session_key)
+    #padded_message = pad_message(message)
+    #encrypted = f.encrypt(padded_message.encode())
+    AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
+    encrypted = AES_cipher.encrypt(message.encode('utf-8'))
     return encrypted
 
 
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    f = Fernet(session_key)
-    decrypted = f.decrypt(message)
+    #f = Fernet(session_key)
+    #decrypted = f.decrypt(message)
+    AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
+    decrypted = AES_cipher.decrypt(message).decode('utf-8')
     return decrypted
 
 

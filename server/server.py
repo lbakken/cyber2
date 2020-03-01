@@ -19,7 +19,8 @@ import socket
 import cryptography
 from cryptography.fernet import Fernet
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from Crypto.Cipher import PKCS1_OAEP as PKCS1_OAEP
+from Crypto.Cipher import AES
 
 host = "localhost"
 port = 10001
@@ -41,10 +42,10 @@ def decrypt_key(session_key):
     server_private_key = RSA.importKey(externKey)
 
     #print(server_private_key)
-    sentinel = session_key
+    #sentinel = session_key
 
-    handshake_cipher = Cipher_PKCS1_v1_5.new(server_private_key)
-    decrypted_handshake = handshake_cipher.decrypt(session_key, sentinel)
+    handshake_cipher = PKCS1_OAEP.new(server_private_key)
+    decrypted_handshake = handshake_cipher.decrypt(session_key)
     return decrypted_handshake
 
 
@@ -52,8 +53,10 @@ def decrypt_key(session_key):
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
 
-    f = Fernet(session_key)
-    decrypted = f.decrypt(client_message)
+    #f = Fernet(session_key)
+    #decrypted = f.decrypt(client_message)
+    AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
+    decrypted = AES_cipher.decrypt(client_message).decode('utf-8')
     return decrypted
 
 
@@ -61,9 +64,11 @@ def decrypt_message(client_message, session_key):
 def encrypt_message(message, session_key):
     # TODO: Implement this function
 
-    f = Fernet(session_key)
-    padded_message = pad_message(message)
-    encrypted = f.encrypt(padded_message.encode())
+    #f = Fernet(session_key)
+    #padded_message = pad_message(message)
+    #encrypted = f.encrypt(padded_message.encode())
+    AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
+    encrypted = AES_cipher.encrypt(message.encode('utf-8'))
     return encrypted
 
 
@@ -91,8 +96,13 @@ def verify_hash(user, password):
         for line in reader.read().split('\n'):
             line = line.split("\t")
             if line[0] == user:
+                print(line[0])
+                print(user)
+                print(line[1])
                 # TODO: Generate the hashed password
                 hashed_password = hash(password+line[1])
+                print(hashed_password)
+                print(line[2])
                 return hashed_password == line[2]
         reader.close()
     except FileNotFoundError:
@@ -133,7 +143,9 @@ def main():
                 text_message = decrypt_message(ciphertext_message, plaintext_key)
 
                 # TODO: Split response from user into the username and password
-                user, password = text_message
+                user = text_message.split(" ")[0]
+                password = text_message.split(" ")[1]
+
                 success = verify_hash(user, password)
 
                 # TODO: Encrypt response to client
