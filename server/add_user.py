@@ -11,6 +11,8 @@ Zachary Ryan
 
 """
 import random
+import hashlib
+hash_algo = hashlib.sha256()
 ALPH = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 def gen_salt():
@@ -25,7 +27,11 @@ password = input("Enter a password: ")
 
 # TODO: Create a salt and hash the password
 salt = gen_salt()
-hashed_password = hash(password+salt)
+hash_algo.update(password.encode('utf-8'))
+hash_algo.update(salt.encode('utf-8'))
+hashed_password = hash_algo.hexdigest()
+
+#hashed_password = hash(password+salt)
 
 try:
     reading = open("passfile.txt", 'r')

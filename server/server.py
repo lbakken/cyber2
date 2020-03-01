@@ -21,6 +21,8 @@ from cryptography.fernet import Fernet
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP as PKCS1_OAEP
 from Crypto.Cipher import AES
+import hashlib
+hash_algo = hashlib.sha256()
 
 host = "localhost"
 port = 10001
@@ -96,13 +98,11 @@ def verify_hash(user, password):
         for line in reader.read().split('\n'):
             line = line.split("\t")
             if line[0] == user:
-                print(line[0])
-                print(user)
-                print(line[1])
                 # TODO: Generate the hashed password
-                hashed_password = hash(password+line[1])
-                print(hashed_password)
-                print(line[2])
+                #hashed_password = hash(password+line[1])
+                hash_algo.update(password.encode('utf-8'))
+                hash_algo.update(line[1].encode('utf-8'))
+                hashed_password = hash_algo.hexdigest()
                 return hashed_password == line[2]
         reader.close()
     except FileNotFoundError:
