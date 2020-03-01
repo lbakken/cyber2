@@ -45,6 +45,7 @@ def generate_key():
 # Takes an AES session key and encrypts it using the appropriate
 # key and return the value
 def encrypt_handshake(session_key):
+    print(session_key)
     # TODO: Implement this function
     file = open("cli", "rb")
     externKey = file.read()

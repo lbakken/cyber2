@@ -18,6 +18,8 @@ Zachary Ryan
 import socket
 import cryptography
 from cryptography.fernet import Fernet
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 
 host = "localhost"
 port = 10001
@@ -33,10 +35,17 @@ def decrypt_key(session_key):
     # TODO: Implement this function
 
     file = open("srv", "rb")
-    key = file.read()
+    externKey = file.read()
     file.close()
 
-    return session_key
+    server_private_key = RSA.importKey(externKey)
+
+    #print(server_private_key)
+    sentinel = session_key
+
+    handshake_cipher = Cipher_PKCS1_v1_5.new(server_private_key)
+    decrypted_handshake = handshake_cipher.decrypt(session_key, sentinel)
+    return decrypted_handshake
 
 
 # Write a function that decrypts a message using the session key
@@ -53,7 +62,8 @@ def encrypt_message(message, session_key):
     # TODO: Implement this function
 
     f = Fernet(session_key)
-    encrypted = f.encrypt(message.encode())
+    padded_message = pad_message(message)
+    encrypted = f.encrypt(padded_message.encode())
     return encrypted
 
 
