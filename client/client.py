@@ -19,8 +19,6 @@ import socket
 import os
 
 import secrets
-import cryptography
-from cryptography.fernet import Fernet
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP as PKCS1_OAEP
 from Crypto.Cipher import AES
@@ -62,9 +60,6 @@ def encrypt_handshake(session_key):
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    #f = Fernet(session_key)
-    #padded_message = pad_message(message)
-    #encrypted = f.encrypt(padded_message.encode())
     AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
     encrypted = AES_cipher.encrypt(message.encode('utf-8'))
     return encrypted
@@ -73,8 +68,6 @@ def encrypt_message(message, session_key):
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    #f = Fernet(session_key)
-    #decrypted = f.decrypt(message)
     AES_cipher = AES.new(session_key, AES.MODE_EAX, "ASDFJKL;QWERYUIO".encode('utf-8'))
     decrypted = AES_cipher.decrypt(message).decode('utf-8')
     return decrypted
